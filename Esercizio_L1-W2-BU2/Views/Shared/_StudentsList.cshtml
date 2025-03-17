@@ -1,0 +1,32 @@
+﻿@model StudentsListViewModel
+
+@if (Model.Students != null && Model.Students.Count() > 0)
+{
+    <table id="StudentsTable" class="table table-striped">
+        <thead>
+        <th>Nome</th>
+        <th>Cognome</th>
+        <th>Data Di Nascita</th>
+        <th>Email</th>
+        <th>Actions</th>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Students)
+            {
+                <tr>
+                    <td>@product.Nome</td>
+                    <td>@product.Cognome</td>
+                    <td>@product.DataDiNascita</td>
+                    <td>@product.Email</td>
+                    <td>
+                        <button onclick="showDetailsModal('@product.Id')">Details</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-danger">Non ci sono studenti in lista!</p>
+}
