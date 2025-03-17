@@ -28,5 +28,11 @@ namespace Esercizio_L1_W2_BU2.Services
             }
             return studentsList;
         }
+
+        public async Task<Student> GetStudentByIdAsync(Guid id)
+        {
+            var student =  await _applicationDBContext.Students.FindAsync(id);
+            return student;
+        }
     }
 }

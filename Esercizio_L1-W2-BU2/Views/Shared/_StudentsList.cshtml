@@ -11,15 +11,15 @@
         <th>Actions</th>
         </thead>
         <tbody>
-            @foreach (var product in Model.Students)
+            @foreach (var student in Model.Students)
             {
                 <tr>
-                    <td>@product.Nome</td>
-                    <td>@product.Cognome</td>
-                    <td>@product.DataDiNascita</td>
-                    <td>@product.Email</td>
+                    <td>@student.Nome</td>
+                    <td>@student.Cognome</td>
+                    <td>@student.DataDiNascita</td>
+                    <td>@student.Email</td>
                     <td>
-                        <button onclick="showDetailsModal('@product.Id')">Details</button>
+                        <button onclick="showDetailsModal('@student.Id')">Details</button>
                     </td>
                 </tr>
             }
