@@ -4,6 +4,8 @@
 
 <h1>Lista degli Studenti</h1>
 
+<button class="btn btn-primary" onclick="showAddModal()">Aggiungi Studente</button>
+
 <div id="ListContainer" class="container"></div>
 
 <div id="studentModal" class="modal" tabindex="-1">
@@ -18,7 +20,56 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="editModal" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modifica Studente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="editModalBody" class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="addModal" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Aggiungi Studente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="addModalBody" class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Conferma eliminazione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Sei sicuro di voler eliminare lo studente?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnDelete" class="btn btn-danger">Elimina</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -26,15 +77,12 @@
 
 @section Scripts {
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        function studentsList() {
             let container = document.getElementById("ListContainer");
 
             if(container) {
                 const response = fetch("students/GetAllStudents", {
                     method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
                 })
                 .then(response => {
                     if(!response.ok) {
@@ -49,14 +97,15 @@
                 });
 
             }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            studentsList();
         })
 
         async function showDetailsModal(id) {
             let response = await fetch(`students/GetStudentDetails/${id}`, {
                 method: "GET",
-                headers: {
-                    "Content-Type": "application/json"
-                }
             });
             if(!response.ok) {
                 throw new Error("Errore nella richiesta");
@@ -76,6 +125,129 @@
                             <strong>Email:</strong> ${details.email}`;
 
             modal.show();
+        }
+
+        async function showEditModal(id) {
+            let response = await fetch(`students/Edit/${id}`, {
+                method: "GET",
+            });
+            if(!response.ok) {
+                throw new Error("Errore nella richiesta");
+            }
+            let data = await response.text();
+
+            let modal = new bootstrap.Modal(document.getElementById("editModal"));
+
+            if(modal) {
+                let body = document.getElementById("editModalBody");
+                body.innerHTML = data;
+                modal.show();
+
+            }
+        }
+
+        async function saveEdit() {
+            const form = document.getElementById("formEdit");
+
+            if(form) {
+                let formData = new FormData(form);
+
+                let response = await fetch("students/Edit/save", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if(!response.ok) {
+                    throw new Error("Errore nella richiesta");
+                }
+                let data = await response.json();
+
+                if(data.success) {
+                    const modalEdit = document.getElementById("editModal");
+
+                if(modalEdit) {
+                        let modal = bootstrap.Modal.getInstance(modalEdit);
+                        modal.hide();
+                        studentsList();
+                    }
+                }
+
+            }
+        }
+
+        function showDeleteModal(id) {
+            let modal =document.getElementById("deleteModal");
+
+            if(modal) {
+                const deleteModal = new bootstrap.Modal(modal);
+
+                deleteModal.show();
+
+                const btnDelete = document.getElementById("btnDelete");
+
+                btnDelete.onclick = () => {
+                    deleteStudent(id);
+                }
+            }
+        }
+
+        async function deleteStudent(id) {
+            let response = await fetch(`students/Delete/${id}`, {
+                method: "POST",
+            });
+
+            if(!response.ok) {
+                throw new Error("Errore nella richiesta");
+            }
+
+            let data = await response.json();
+
+            if(data.success) {
+                const modalDelete = document.getElementById("deleteModal");
+                if(modalDelete) {
+                    let modal = bootstrap.Modal.getInstance(modalDelete);
+
+                    modal.hide();
+                    studentsList();
+                }
+            }
+        }
+
+        async function showAddModal() {
+            let modal =document.getElementById("addModal");
+            if(modal) {
+                const addModal = new bootstrap.Modal(modal);
+                const result = await fetch("Student/Add");
+                const response = await result.text();
+
+                const body = document.getElementById("addModalBody");
+                body.innerHTML = response;
+                addModal.show();
+            }
+        }
+
+        async function saveAdd() {
+            const form = document.getElementById("formAdd");
+
+            if(form) {
+                let formData = new FormData(form);
+                let response = await fetch("Student/Add", {
+                    method: "POST",
+                    body: formData,
+                });
+                if(!response.ok) {
+                    throw new Error("Errore nella richiesta");
+                }
+                let data = await response.json();
+                if(data.success) {
+                    const modalAdd = document.getElementById("addModal");
+                    if(modalAdd) {
+                        let modal = bootstrap.Modal.getInstance(modalAdd);
+                        modal.hide();
+                        studentsList();
+                    }
+                }
+            }
         }
     </script>
 }

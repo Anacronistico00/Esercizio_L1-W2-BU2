@@ -19,7 +19,9 @@
                     <td>@student.DataDiNascita</td>
                     <td>@student.Email</td>
                     <td>
-                        <button onclick="showDetailsModal('@student.Id')">Details</button>
+                        <button class="btn btn-sm btn-info" onclick="showDetailsModal('@student.Id')">Details</button>
+                        <button class="btn btn-sm btn-warning" onclick="showEditModal('@student.Id')">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="showDeleteModal('@student.Id')">Delete</button>
                     </td>
                 </tr>
             }

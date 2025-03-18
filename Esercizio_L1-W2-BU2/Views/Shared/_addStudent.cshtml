@@ -1,0 +1,21 @@
+﻿@model AddStudentViewModel
+
+<form id="formAdd">
+    <div class="mb-3">
+        <label for="Nome" class="form-label">Nome</label>
+        <input id="Nome" type="text" class="form-control" asp-for="Nome" />
+    </div>
+    <div class="mb-3">
+        <label for="Cognome" class="form-label">Cognome</label>
+        <textarea id="Cognome" class="form-control" asp-for="Cognome"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="DataDiNascita" class="form-label">Data Di Nascita</label>
+        <input id="DataDiNascita" type="date" class="form-control" asp-for="DataDiNascita" />
+    </div>
+    <div class="mb-3">
+        <label for="Email" class="form-label">Email</label>
+        <input id="Email" type="text" class="form-control" asp-for="Email" />
+    </div>
+    <button class="btn btn-primary" type="button" onclick="saveAdd()">Salva</button>
+</form>

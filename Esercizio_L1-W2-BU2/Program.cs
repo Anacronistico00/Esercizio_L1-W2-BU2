@@ -1,6 +1,7 @@
 using Esercizio_L1_W2_BU2.Data;
 using Esercizio_L1_W2_BU2.Services;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<StudentService>();
+builder.Services.AddScoped<LoggerService>();
+LoggerService.ConfigureLogger();
 
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseSqlServer(
