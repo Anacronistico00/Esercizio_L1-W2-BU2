@@ -152,16 +152,18 @@ namespace Esercizio_L1_W2_BU2.Controllers
         {
             try
             {
-                _studentService.CreateStudentAsync(student);
+                await _studentService.CreateStudentAsync(student, User);
 
                 string logMessage = "Entity Added successfully";
                 _loggerService.LogInformation(logMessage);
 
-                return Json(new
-                {
-                    success = true,
-                    message = logMessage
-                });
+                return Json(
+                    new
+                    {
+                        success = true,
+                        message = logMessage
+                    }
+                );
             }
             catch
             {

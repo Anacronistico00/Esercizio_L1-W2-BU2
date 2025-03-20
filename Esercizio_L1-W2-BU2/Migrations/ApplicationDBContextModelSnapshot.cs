@@ -156,6 +156,12 @@ namespace Esercizio_L1_W2_BU2.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateOnly?>("DataDiIscrizione")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("date")
+                        .HasDefaultValueSql("GETDATE()");
+
                     b.Property<DateTime?>("DataDiNascita")
                         .IsRequired()
                         .HasColumnType("datetime2");
@@ -169,7 +175,12 @@ namespace Esercizio_L1_W2_BU2.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Students");
 
@@ -306,6 +317,15 @@ namespace Esercizio_L1_W2_BU2.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Esercizio_L1_W2_BU2.Models.Student", b =>
+                {
+                    b.HasOne("Esercizio_L1_W2_BU2.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });

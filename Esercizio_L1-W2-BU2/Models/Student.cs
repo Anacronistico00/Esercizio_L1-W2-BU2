@@ -24,5 +24,14 @@ namespace Esercizio_L1_W2_BU2.Models
         [Required(ErrorMessage = "Il campo Email è obbligatorio")]
         [EmailAddress(ErrorMessage = "Formato email non valido")]
         public string? Email { get; set; }
+
+        [Display(Name = "Data di Iscrizione")]
+        [DataType(DataType.Date)]
+        public DateOnly? DataDiIscrizione { get; set; }
+
+        public string? UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public ApplicationUser User { get; set; }
     }
 }

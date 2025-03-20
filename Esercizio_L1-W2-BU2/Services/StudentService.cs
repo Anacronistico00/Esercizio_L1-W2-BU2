@@ -1,18 +1,23 @@
 ﻿using Esercizio_L1_W2_BU2.Data;
 using Esercizio_L1_W2_BU2.Models;
 using Esercizio_L1_W2_BU2.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Esercizio_L1_W2_BU2.Services
 {
     public class StudentService
     {
         private readonly ApplicationDBContext _applicationDBContext;
+        private readonly UserManager<ApplicationUser> _usermanager;
 
-        public StudentService(ApplicationDBContext applicationDBContext)
+
+        public StudentService(ApplicationDBContext applicationDBContext, UserManager<ApplicationUser> userManager)
         {
             _applicationDBContext = applicationDBContext;
+            _usermanager = userManager;
         }
 
         public async Task<StudentsListViewModel> GetAllStudentsAsync()
@@ -20,7 +25,7 @@ namespace Esercizio_L1_W2_BU2.Services
             var studentsList = new StudentsListViewModel();
             try
             {
-                studentsList.Students = await _applicationDBContext.Students.ToListAsync();
+                studentsList.Students = await _applicationDBContext.Students.Include(p => p.User).ToListAsync();
             }
             catch
             {
@@ -78,20 +83,23 @@ namespace Esercizio_L1_W2_BU2.Services
             }
         }
 
-        public async Task<bool> CreateStudentAsync(AddStudentViewModel student)
+        public async Task<bool> CreateStudentAsync(AddStudentViewModel student, ClaimsPrincipal claimsPrincipal)
         {
             try
             {
+                var user = await _usermanager.FindByEmailAsync(claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value);
+
                 var studentToAdd = new Student()
                 {
                     Id = Guid.NewGuid(),
                     Nome = student.Nome,
                     Cognome = student.Cognome,
                     DataDiNascita = student.DataDiNascita,
-                    Email = student.Email
+                    Email = student.Email,
+                    UserId = user.Id
                 };
 
-                await _applicationDBContext.Students.AddAsync(studentToAdd);
+                _applicationDBContext.Students.Add(studentToAdd);
                 await _applicationDBContext.SaveChangesAsync();
                 return true;
             }

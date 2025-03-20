@@ -2,22 +2,26 @@
 
 @if (Model.Students != null && Model.Students.Count() > 0)
 {
-    <table id="StudentsTable" class="table table-striped">
+    <table id="StudentsTable" class="table table-striped text-center">
         <thead>
-        <th>Nome</th>
-        <th>Cognome</th>
-        <th>Data Di Nascita</th>
-        <th>Email</th>
-        <th>Actions</th>
+        <th class="text-center">Nome</th>
+        <th class="text-center">Cognome</th>
+        <th class="text-center">Data Di Nascita</th>
+        <th class="text-center">Email</th>
+        <th class="text-center">Aggiunto da</th>
+        <th class="text-center">Il giorno</th>
+        <th class="text-center">Azioni</th>
         </thead>
         <tbody>
             @foreach (var student in Model.Students)
             {
                 <tr>
-                    <td>@student.Nome</td>
-                    <td>@student.Cognome</td>
-                    <td>@student.DataDiNascita</td>
-                    <td>@student.Email</td>
+                    <td class="border border-dark">@student.Nome</td>
+                    <td class="border-end border-dark">@student.Cognome</td>
+                    <td class="border-end border-dark">@student.DataDiNascita</td>
+                    <td class="border-end border-dark">@student.Email</td>
+                    <td>@student.User.Email</td>
+                    <td>@student.DataDiIscrizione</td>
                     <td>
                         <button class="btn btn-sm btn-info" onclick="showDetailsModal('@student.Id')">Details</button>
                         <button class="btn btn-sm btn-warning" onclick="showEditModal('@student.Id')">Edit</button>

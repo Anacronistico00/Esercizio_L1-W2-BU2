@@ -2,6 +2,7 @@
 using Esercizio_L1_W2_BU2.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -60,7 +61,7 @@ namespace Esercizio_L1_W2_BU2.Controllers
                 var user = await _userManager.FindByEmailAsync(newUser.Email);
 
 
-                await _userManager.AddToRoleAsync(user, "Studente");
+                await _userManager.AddToRoleAsync(user, "Docente");
             }
             return RedirectToAction("Index", "Home");
         }
@@ -81,7 +82,8 @@ namespace Esercizio_L1_W2_BU2.Controllers
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                return View("Error");
+                ModelState.AddModelError(string.Empty, "Email o password non validi.");
+                return View(model);
             }
 
             var signInResult = await _signInManager.PasswordSignInAsync(user, model.Password, true, false);
@@ -113,6 +115,7 @@ namespace Esercizio_L1_W2_BU2.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -120,6 +123,7 @@ namespace Esercizio_L1_W2_BU2.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete()
         {
             var user = await _userManager.FindByEmailAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value);
