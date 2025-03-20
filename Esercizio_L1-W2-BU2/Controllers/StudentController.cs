@@ -1,19 +1,24 @@
 ﻿using Esercizio_L1_W2_BU2.Models;
 using Esercizio_L1_W2_BU2.Services;
 using Esercizio_L1_W2_BU2.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Esercizio_L1_W2_BU2.Controllers
 {
+    [Authorize(Roles = "Docente")]
     public class StudentController : Controller
     {
         private readonly StudentService _studentService;
         private readonly LoggerService _loggerService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public StudentController(StudentService studentService, LoggerService loggerService)
+        public StudentController(StudentService studentService, LoggerService loggerService, UserManager<ApplicationUser> userManager)
         {
             _studentService = studentService;
             _loggerService = loggerService;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -24,7 +29,19 @@ namespace Esercizio_L1_W2_BU2.Controllers
         [HttpGet("students/GetAllStudents")]
         public async Task<IActionResult> GetAllStudents()
         {
-            var studentsList = await _studentService.GetAllStudentsAsync();
+            var studentsList = new StudentsListViewModel();
+
+            try
+            {
+                studentsList = await _studentService.GetAllStudentsAsync();
+                _loggerService.LogInformation("Students retrieved successfully");
+            }
+            catch
+            {
+                studentsList.Students = null;
+                _loggerService.LogError("Error while retrieving students");
+            }
+            
             return PartialView("_StudentsList", studentsList);
         }
 
